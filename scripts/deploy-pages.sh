@@ -34,8 +34,10 @@ else
   git -C "$WORKTREE" checkout -q --orphan "$BRANCH"
 fi
 
-# Clear tracked files but keep the worktree's own .git pointer.
-git -C "$WORKTREE" rm -rq --ignore-unmatch .
+# Clear tracked files but keep the worktree's own .git pointer. A fresh orphan
+# branch still carries the source tree staged from the previous checkout, so
+# removal has to be forced.
+git -C "$WORKTREE" rm -rqf --ignore-unmatch .
 cp -R dist/. "$WORKTREE"/
 # Tells Pages to serve the files as-is rather than running them through Jekyll,
 # which would strip paths beginning with an underscore.

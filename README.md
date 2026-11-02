@@ -67,20 +67,47 @@ VITE_AI_PROXY_URL=http://localhost:8787/api/review npm run dev
 
 AI 调用失败、超时或未配置时，会自动回退到本地摘要并说明原因。提示词与服务端 system message 都写明了约束：只能基于真实记录总结，不得编造，数据不足直说，不说教、不贴标签、不把「没打卡」解释为失败。
 
-## 生产部署
+## 线上地址
+
+**https://moyawang92-code.github.io/my-growth/**
+
+## 重新发布
+
+改完代码后跑一条命令即可更新线上版本：
 
 ```bash
-npm run build        # 产物在 dist/
+npm run deploy
 ```
 
-`dist/` 是纯静态文件，可部署到任意静态托管（Vercel / Netlify / Cloudflare Pages / Nginx）。
+它会构建（base 设为 `/my-growth/`）、生成 SPA 兜底页，然后把产物推到 `gh-pages` 分支。GitHub Pages 的源指向该分支，推送后约一分钟生效。
 
-因为使用了 `BrowserRouter`，需要把所有路径回退到 `index.html`：
+### 为什么不是 GitHub Actions 自动部署
 
-- **Nginx**：`try_files $uri $uri/ /index.html;`
-- **Vercel / Netlify**：添加 `/* → /index.html` 的 rewrite 规则（SPA fallback）。
+自动部署需要 token 具备 `workflow` 权限，当前授权范围只有 `repo`。想改成「推送即自动发布」的话：
 
-如果启用了 AI，`server/ai-proxy.mjs` 需要单独作为 Node 进程部署，并把 `AI_ALLOWED_ORIGIN` 改成正式站点域名、`VITE_AI_PROXY_URL` 改成代理的公网地址。
+```bash
+gh auth refresh --scopes repo,workflow
+mkdir -p .github/workflows
+cp docs/github-actions-deploy.yml.example .github/workflows/deploy.yml
+git add .github && git commit -m "ci: 自动部署到 Pages" && git push
+```
+
+流水线文件已经写好放在 [docs/github-actions-deploy.yml.example](docs/github-actions-deploy.yml.example)，内容包含跑测试、构建、SPA 兜底和发布。
+
+### 部署到其他平台
+
+`dist/` 是纯静态文件，也可以放到 Vercel / Netlify / Cloudflare Pages / Nginx。注意两点：
+
+- 因为用了 `BrowserRouter`，需要 SPA fallback：Nginx 用 `try_files $uri $uri/ /index.html;`，Vercel / Netlify 加 `/* → /index.html` 的 rewrite。
+- 如果部署在域名根路径，构建时不要传 `--base`（默认 `/` 即可）。
+
+如果启用了 AI，`server/ai-proxy.mjs` 需要单独作为 Node 进程部署，并把 `AI_ALLOWED_ORIGIN` 改成正式站点域名、`VITE_AI_PROXY_URL` 改成代理的公网地址。注意 GitHub Pages 只能托管静态文件，跑不了这个代理。
+
+## 关于隐私
+
+仓库是公开的，但**你的记录不在仓库里**。所有记录写入浏览器本地的 IndexedDB，既不会提交到 Git，也不会上传到任何服务器——这个应用没有后端。公开的只有源码本身。
+
+因此也要注意：换浏览器、换设备、清理浏览器数据都会导致记录丢失，线上地址和本地 `localhost` 也是两套独立存储。请用「我的年度 → 数据备份」定期导出 JSON。
 
 ## 目录结构
 
