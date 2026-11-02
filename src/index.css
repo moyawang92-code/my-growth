@@ -1,0 +1,60 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-canvas: #faf7f2;
+  --color-surface: #fffdfa;
+  --color-line: #ebe5dc;
+  --color-line-strong: #ddd5c9;
+
+  --color-ink: #33302c;
+  --color-ink-soft: #6b665f;
+  --color-ink-faint: #9c968d;
+
+  --color-sage-50: #f1f5f0;
+  --color-sage-100: #e2eade;
+  --color-sage-200: #c7d7c0;
+  --color-sage-300: #a8c09e;
+  --color-sage-400: #8aa87f;
+  --color-sage-500: #6f8e66;
+  --color-sage-600: #587350;
+
+  --color-gold-100: #f6eedc;
+  --color-gold-300: #e2c893;
+  --color-gold-500: #bd9850;
+
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'Noto Sans SC', 'Helvetica Neue', Arial, sans-serif;
+
+  --radius-card: 16px;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Textareas grow with their content, so no inner scrollbar should appear. */
+  textarea {
+    font-family: inherit;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-sage-400);
+    outline-offset: 2px;
+  }
+}
+
+@utility text-balance-zh {
+  text-wrap: pretty;
+  line-height: 1.75;
+}

@@ -1,0 +1,13 @@
+node_modules/
+dist/
+*.local
+*.tsbuildinfo
+
+# Local env files: these can hold the AI API key and must never be committed.
+.env
+.env.*
+!.env.example
+
+.DS_Store
+*.log
+.vite/
